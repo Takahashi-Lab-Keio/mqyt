@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import paho.mqtt.client as mqtt     # MQTTのライブラリをインポート
-from time import sleep              # 3秒間のウェイトのために使う
+from time import sleep
+import cv2
+import os
 
 class Publisher:
     """
@@ -35,6 +37,7 @@ class Publisher:
     # publishが完了したときの処理
     def on_publish(self, client, userdata, mid):
         print("publish: {0}".format(mid))
+        self.finish_publication = True
 
     def publish(self, topic, type, msg):
         """
@@ -44,11 +47,23 @@ class Publisher:
         type: message type ("txt" or "img")
         msg: published msg
         """
+        self.finish_publication = False
         if type == "txt":
             self.client.publish(topic, msg)    # トピック名とメッセージを決めて送信
-            sleep(0.1)
-
-
+        elif type == "img":
+            # msg: ndarray
+            cv2.imwrite('/tmp/tmp.jpg', msg)
+            with open('/tmp/tmp.jpg', "rb") as fileDataBinary:
+                data = fileDataBinary.read()
+            bitArray = bytearray(data)
+            self.client.publish(topic, bitArray)    # トピック名とメッセージを決めて送信
+            os.remove('/tmp/tmp.jpg')
+        else:
+            assert False, "invalid type"
+        # wait
+        while(not self.finish_publication):
+            pass
+        
 if __name__ == "__main__":
 
     publisher = Publisher()

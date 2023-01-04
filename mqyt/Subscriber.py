@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import paho.mqtt.client as mqtt     # MQTTのライブラリをインポート
+import numpy as np
+import cv2
 
 class Subscriber:
     """
@@ -45,6 +47,12 @@ class Subscriber:
         if self.type == "txt":
             msg_str = str((msg.payload).decode('utf-8'))
             self.func(msg_str)
+        elif self.type == "img":
+            arr = np.frombuffer(msg.payload, dtype=np.uint8)
+            img = cv2.imdecode(arr, flags=cv2.IMREAD_COLOR)
+            self.func(img)
+        else:
+            assert False, "invalid type"
 
 def callback(msg):
     print("callback result", msg)

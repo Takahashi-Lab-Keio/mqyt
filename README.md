@@ -4,8 +4,11 @@ mqyt is a Python Library for communication among local scripts and remote server
 
 ## Installation
 
+for editor
 ```shell
-pip install git+git@github.com:Takahashi-Lab-Keio/mqyt.git
+git clone git@github.com:Takahashi-Lab-Keio/mqyt.git
+cd mqyt
+pip install -e .
 ```
 
 
@@ -19,8 +22,9 @@ from mqyt import Publisher
 publisher = Publisher()
 
 # publish message
+# port: , host: 
 # type: "txt" or "img", msg: published data, topic: topic name
-publisher.publish(type="txt", msg="ytlab", topic="robot-action-pub/001")
+publisher.publish(port=1883, host="broker.emqx.io", type="txt", msg="ytlab", topic="robot-action-pub/001")
 ```
 ### Subscriber
 
@@ -34,7 +38,7 @@ def callback(msg):
 if __name__ == "__main__":
     # create subscriber instance
     # type: "txt" or "img", callback: callback function, topic: topic name
-    subscriber = Subscriber(type="txt", callback=callback, topic="robot-action/001")
+    subscriber = Subscriber(port=1883, host="broker.emqx.io", type="txt", callback=callback, topic="robot-action/001")
 
 ```
 

@@ -1,21 +1,23 @@
 #!/usr/bin/env python
-import os
-from dotenv import load_dotenv
 import paho.mqtt.client as mqtt     # MQTTのライブラリをインポート
 from time import sleep              # 3秒間のウェイトのために使う
 
 class Publisher:
+    """
+    a publisher of mqtt topic message
 
-    def __init__(self):
-        #環境変数の読み込み
-        load_dotenv()
+    host: mqtt host
+    port: port number
+    """
+
+    def __init__(self, host='broker.emqx.io', port=1883):
         # MQTTの接続設定
         self.client = mqtt.Client()                 # クラスのインスタンス(実体)の作成
         self.client.on_connect = self.on_connect         # 接続時のコールバック関数を登録
         self.client.on_disconnect = self.on_disconnect   # 切断時のコールバックを登録
         self.client.on_publish = self.on_publish         # メッセージ送信時のコールバック
         
-        self.client.connect(os.environ["MQTT_HOST"], int(os.environ["MQTT_PORT"]), 60)  # 接続先はMQTTサーバー
+        self.client.connect(host, port, 60)  # 接続先はMQTTサーバー
         sleep(0.2)
 
         # 通信処理スタート
@@ -34,11 +36,13 @@ class Publisher:
     def on_publish(self, client, userdata, mid):
         print("publish: {0}".format(mid))
 
-    def publish(self, type, msg, topic=os.environ["MQTT_TOPIC_MESSAGE"]):
+    def publish(self, topic, type, msg):
         """
         publish msg to remote server
-        type: txt or image
-        msg: publish data
+
+        topic: topic name
+        type: message type ("txt" or "img")
+        msg: published msg
         """
         if type == "txt":
             self.client.publish(topic, msg)    # トピック名とメッセージを決めて送信
@@ -48,4 +52,4 @@ class Publisher:
 if __name__ == "__main__":
 
     publisher = Publisher()
-    publisher.publish("txt", "onishi")
+    publisher.publish("topic_pub", "txt", "ytlab")

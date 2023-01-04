@@ -1,17 +1,18 @@
 #!/usr/bin/env python
-import os
-from dotenv import load_dotenv
 import paho.mqtt.client as mqtt     # MQTTのライブラリをインポート
 
 class Subscriber:
     """
+    a subscriber of mqtt topic message
+
+    topic: topic name
     type: message type ("txt" or "img")
     func: callback function
+    host: mqtt host
+    port: port number
     """
 
-    def __init__(self, type, callback, topic=os.environ["MQTT_TOPIC_MESSAGE"]):
-        #環境変数の読み込み
-        load_dotenv()
+    def __init__(self, topic, type, callback, host='broker.emqx.io', port=1883):
         self.func = callback
         self.type = type
         self.topic = topic
@@ -22,7 +23,7 @@ class Subscriber:
         self.client.on_disconnect = self.on_disconnect   # 切断時のコールバックを登録
         self.client.on_message = self.callback         # メッセージ到着時のコールバック
 
-        self.client.connect(os.environ["MQTT_HOST"], int(os.environ["MQTT_PORT"]), 60)  # 接続先はMQTTサーバー
+        self.client.connect(host, port, 60)  # 接続先はMQTTサーバー
         
         # 通信処理スタート
         self.client.loop_forever()                  # 永久ループして待ち続ける
@@ -50,4 +51,4 @@ def callback(msg):
 
 if __name__ == "__main__":
 
-    subscriber = Subscriber("txt", callback)
+    subscriber = Subscriber("topic_sub", "txt", callback)

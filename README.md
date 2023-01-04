@@ -4,32 +4,39 @@ mqyt is a Python Library for communication among local scripts and remote server
 
 ## Installation
 
-for editor
+### for user
+
+```shell
+pip install git+git://github.com/Takahashi-Lab-Keio/mqyt.git
+```
+### for developer
+
 ```shell
 git clone git@github.com:Takahashi-Lab-Keio/mqyt.git
 cd mqyt
 pip install -e .
 ```
 
+Using this installation method, the mqyt module is synchronized to the local mqyt code.
 
 ## Tutorial
 ### Publisher
 
 ```python
-from mqyt import Publisher
+import mqyt
 
 # create publisher instance
-publisher = Publisher()
+publisher = mqyt.Publisher()
 
 # publish message
-# port: , host: 
+# port: connection port number (1883 if TCP connection), host: host name
 # type: "txt" or "img", msg: published data, topic: topic name
-publisher.publish(port=1883, host="broker.emqx.io", type="txt", msg="ytlab", topic="robot-action-pub/001")
+publisher.publish(port=1883, host="broker.emqx.io", type="txt", msg="ytlab", topic="topic_pub")
 ```
 ### Subscriber
 
 ```python
-from mqyt import Subscriber
+import mqyt
 
 # callback function that called when the topic is subscribed
 def callback(msg):
@@ -37,8 +44,9 @@ def callback(msg):
 
 if __name__ == "__main__":
     # create subscriber instance
+    # port: connection port number (1883 if TCP connection), host: host name
     # type: "txt" or "img", callback: callback function, topic: topic name
-    subscriber = Subscriber(port=1883, host="broker.emqx.io", type="txt", callback=callback, topic="robot-action/001")
+    subscriber = mqyt.Subscriber(port=1883, host="broker.emqx.io", type="txt", callback=callback, topic="topic_sub")
 
 ```
 

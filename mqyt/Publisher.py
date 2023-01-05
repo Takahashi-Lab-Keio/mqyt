@@ -3,6 +3,7 @@ import paho.mqtt.client as mqtt     # MQTTのライブラリをインポート
 from time import sleep
 import cv2
 import os
+import json
 
 class Publisher:
     """
@@ -50,6 +51,9 @@ class Publisher:
         self.finish_publication = False
         if type == "txt":
             self.client.publish(topic, msg)    # トピック名とメッセージを決めて送信
+        if type == "txtarray":
+            msg_json = json.dumps(msg)
+            self.client.publish(topic, msg_json)    # トピック名とメッセージを決めて送信
         elif type == "img":
             # msg: ndarray
             cv2.imwrite('/tmp/tmp.jpg', msg)

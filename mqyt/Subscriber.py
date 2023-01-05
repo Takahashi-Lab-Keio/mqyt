@@ -2,6 +2,7 @@
 import paho.mqtt.client as mqtt     # MQTTのライブラリをインポート
 import numpy as np
 import cv2
+import json
 
 class Subscriber:
     """
@@ -47,6 +48,9 @@ class Subscriber:
         if self.type == "txt":
             msg_str = str((msg.payload).decode('utf-8'))
             self.func(msg_str)
+        if self.type == "txtarray":
+            msg_json = json.loads(msg.payload)
+            self.func(msg_json)
         elif self.type == "img":
             arr = np.frombuffer(msg.payload, dtype=np.uint8)
             img = cv2.imdecode(arr, flags=cv2.IMREAD_COLOR)

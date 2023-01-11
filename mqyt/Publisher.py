@@ -51,7 +51,7 @@ class Publisher:
         self.finish_publication = False
         if type == "txt":
             self.client.publish(topic, msg)    # トピック名とメッセージを決めて送信
-        if type == "txtarray":
+        elif type == "txtarray":
             msg_json = json.dumps(msg)
             self.client.publish(topic, msg_json)    # トピック名とメッセージを決めて送信
         elif type == "img":

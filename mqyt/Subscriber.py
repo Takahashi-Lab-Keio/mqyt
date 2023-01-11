@@ -15,7 +15,7 @@ class Subscriber:
     port: port number
     """
 
-    def __init__(self, topic, type, callback, host='broker.emqx.io', port=1883):
+    def __init__(self, topic, type, callback, endless, host='broker.emqx.io', port=1883):
         self.func = callback
         self.type = type
         self.topic = topic
@@ -29,7 +29,10 @@ class Subscriber:
         self.client.connect(host, port, 60)  # 接続先はMQTTサーバー
         
         # 通信処理スタート
-        self.client.loop_forever()                  # 永久ループして待ち続ける
+        if endless:
+            self.client.loop_forever()                  # 永久ループして待ち続ける
+        else:
+            self.client.loop_start()                  # 永久ループして待ち続ける
         
     # ブローカーに接続できたときの処理
     def on_connect(self, client, userdata, flag, rc):
@@ -48,7 +51,7 @@ class Subscriber:
         if self.type == "txt":
             msg_str = str((msg.payload).decode('utf-8'))
             self.func(msg_str)
-        if self.type == "txtarray":
+        elif self.type == "txtarray":
             msg_json = json.loads(msg.payload)
             self.func(msg_json)
         elif self.type == "img":

@@ -29,7 +29,8 @@ import mqyt
 publisher = mqyt.Publisher()
 
 # publish message
-# port: connection port number (1883 if TCP connection), host: host name
+# port (optional): connection port number (1883 if TCP connection)
+# host (optional): host name
 # type: "txt" (str) or "img" (numpy.ndarray)
 # msg: published data, topic: topic name
 publisher.publish(port=1883, host="broker.emqx.io", type="txt", msg="ytlab", topic="topic_pub")
@@ -45,10 +46,14 @@ def callback(msg):
 
 if __name__ == "__main__":
     # create subscriber instance
-    # port: connection port number (1883 if TCP connection), host: host name
+    # port (optional): connection port number (1883 if TCP connection)
+    # host (optional): host name
     # type: "txt" (str) or "img" (numpy.ndarray)
     # callback: callback function, topic: topic name
-    subscriber = mqyt.Subscriber(port=1883, host="broker.emqx.io", type="txt", callback=callback, topic="topic_sub")
+    # endless: True or False. 
+    ## Set True if you don't want to shutdown the program.
+    ## Set False if there is another loops and program does not shutdown.
+    subscriber = mqyt.Subscriber(port=1883, host="broker.emqx.io", type="txt", callback=callback, topic="topic_sub", endless=True)
 
 ```
 

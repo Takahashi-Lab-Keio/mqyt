@@ -7,7 +7,7 @@ mqyt is a Python Library for communication among local scripts and remote server
 ### for user
 
 ```shell
-pip install git+ssh://git@github.com/Takahashi-Lab-Keio/mqyt.git
+pip install git+https://github.com/Takahashi-Lab-Keio/mqyt.git
 ```
 ### for developer
 

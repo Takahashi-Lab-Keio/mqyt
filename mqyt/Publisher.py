@@ -4,6 +4,7 @@ from time import sleep
 import cv2
 import os
 import json
+import base64
 
 class Publisher:
     """
@@ -56,12 +57,10 @@ class Publisher:
             self.client.publish(topic, msg_json)    # トピック名とメッセージを決めて送信
         elif type == "img":
             # msg: ndarray
-            cv2.imwrite('/tmp/tmp.jpg', msg)
-            with open('/tmp/tmp.jpg', "rb") as fileDataBinary:
-                data = fileDataBinary.read()
-            bitArray = bytearray(data)
-            self.client.publish(topic, bitArray)    # トピック名とメッセージを決めて送信
-            os.remove('/tmp/tmp.jpg')
+            ret, dst_data = cv2.imencode('.jpg', msg)
+            dst_str = base64.b64encode(dst_data)
+            data = "data:image/jpg;base64," + dst_str.decode()
+            self.client.publish(topic, data)    # トピック名とメッセージを決めて送信
         else:
             assert False, "invalid type"
         # wait

@@ -3,6 +3,7 @@ import paho.mqtt.client as mqtt     # MQTTのライブラリをインポート
 import numpy as np
 import cv2
 import json
+import base64
 
 class Subscriber:
     """
@@ -55,8 +56,9 @@ class Subscriber:
             msg_json = json.loads(msg.payload)
             self.func(msg_json)
         elif self.type == "img":
-            arr = np.frombuffer(msg.payload, dtype=np.uint8)
-            img = cv2.imdecode(arr, flags=cv2.IMREAD_COLOR)
+            img_binary = base64.b64decode(msg.payload[len("data:image/jpg;base64,"):])
+            jpg=np.frombuffer(img_binary,dtype=np.uint8)
+            img = cv2.imdecode(jpg, cv2.IMREAD_COLOR)
             self.func(img)
         else:
             assert False, "invalid type"

@@ -1,12 +1,11 @@
 class Mqtt{
     constructor(data) {
         this.data = data;
-        this.broker = 'ws://broker.emqx.io:8083/mqtt';
     }
-    subscriber(topic) { //シンプルにsubsbribeしたい場合のメソッド
+    subscriber(broker,topic) { //シンプルにsubsbribeしたい場合のメソッド
         console.log("subscribe");
         var client = mqtt.connect(
-            this.broker
+            broker
         );
         client.subscribe(topic);
         client.on('message', function(topic, message){
@@ -14,10 +13,10 @@ class Mqtt{
             return message.toString()
         });
     }
-    subscriber_fetch(topic_fetch) { //subscribeし更にfetchしたい場合のメソッド
+    subscriber_fetch(broker,topic_fetch,fetch_link) { //subscribeし更にfetchしたい場合のメソッド
         console.log("subscribe");
         var client = mqtt.connect(
-            this.broker
+            broker
         );
         client.subscribe(topic_fetch);
         client.on('message', function(topic_fetch, message){
@@ -26,19 +25,19 @@ class Mqtt{
                 content : message.toString()
             };
             console.log("insert前",this.data);
-            fetch("/insertDB", { method: 'POST', 
+            fetch(fetch_link, { method: 'POST', 
                          headers: { 'Content-Type': 'application/json' }, 
                          body: JSON.stringify({action_list: this.data})})
             .catch(error => {
                 console.error('Error!', error.message)});
             
-            setTimeout("location.reload()", 300)
+            setTimeout("location.reload()", 100)
         });
     }
-    subscriber_img(topic_img) { //subscribeし更にfetchしたい場合のメソッド
+    subscriber_img(broker,topic_img) { //subscribeし更にfetchしたい場合のメソッド
         var elem = document.getElementById("image01");
         var client = mqtt.connect(
-            this.broker
+            broker
         );
         client.subscribe(topic_img);
         client.on('message', function(topic_img, message){
@@ -47,9 +46,9 @@ class Mqtt{
             elem.src = message.toString();
         });
     }
-    publisher(topic,message) {
+    publisher(broker,topic,message) {
         var client = mqtt.connect(
-            this.broker
+            broker
         );
         console.log("publish",message);
         client.publish(topic,message);
